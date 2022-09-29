@@ -93,11 +93,14 @@
 		}
 		</script>
 		
+		<script src="changeValue.js"></script>
+		
 		<!-- Script from https://blog.coupler.io/how-to-use-google-sheets-as-database/#How_to_set_up_Google_Sheets_as_a_database_with_the_API USING https://developers.google.com/sheets/api/guides/concepts#cell-->
-		<script src="require.js"></script>
-		<script>
-		//let google = require('googleapis');
-		//let secretKey = require("./client_secret.json");
+<!-- 		<script>
+		let google = require('googleapis');
+		let secretKey = require("./client_secret.json");
+		import google from "googleapis";
+		
 		let jwtClient = new google.auth.JWT(
 			   secretKey.client_email,
 			   null,
@@ -145,7 +148,7 @@
 		});
 
 	</script>
-	
+ -->	
 	
 	
 	
