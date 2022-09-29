@@ -29,71 +29,165 @@
 		<div id="json">Loading table...</div>
 		
 		<script>
+		window.onload = function () {
+			console.log("Script start");
 
-			window.onload = function () {
-				console.log("Script start");
-
-			    <!-- get general data -->
-			    let weekday = new Date().toLocaleString('de-de', {  weekday: 'short' });
-			    console.log("Today is weekday: " + weekday);
-			    const heute = new Date();
-			    let curHour = heute.getHours();
-			    console.log("The hour is: " + curHour)
-			  
-			    <!-- create table -->
-				var id = '1jrb-dt9mooC6_jtUsW3zzDYvCfjVg93V6n5xKhbEMHQ';
-				var gid = '0';
-				var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
-				fetch(url)
-				  .then(response => response.text())
-				  .then(data => document.getElementById("json").innerHTML=createTable(data.slice(47, -2))  
-				  );
-				
-				<!-- close form after wednesday 4pm: input fields and buttons -->
-				if((weekday == "Mi" && curHour >= 16)||((weekday == "Do" || weekday == "Fr" || weekday == "Sa" || weekday == "So") && curHour >= 0)){
-					console.log("Closing Form");
-				}
+			<!-- get general data -->
+			let weekday = new Date().toLocaleString('de-de', {  weekday: 'short' });
+			console.log("Today is weekday: " + weekday);
+			const heute = new Date();
+			let curHour = heute.getHours();
+			console.log("The hour is: " + curHour)
+		  
+			<!-- create table -->
+			var id = '1jrb-dt9mooC6_jtUsW3zzDYvCfjVg93V6n5xKhbEMHQ';
+			var gid = '0';
+			var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+			fetch(url)
+			  .then(response => response.text())
+			  .then(data => document.getElementById("json").innerHTML=createTable(data.slice(47, -2))  
+			  );
+			
+			<!-- close form after wednesday 4pm: input fields and buttons -->
+			if((weekday == "Mi" && curHour >= 16)||((weekday == "Do" || weekday == "Fr" || weekday == "Sa" || weekday == "So") && curHour >= 0)){
+				console.log("Closing Form");
 			}
-				
-			<!-- only creates table for the first 3 columns (name, yes, no) in google sheet -->
-			function createTable(jsonString){
-				
-				var json = JSON.parse(jsonString);
-				var table = '<table id="table1"><tr>'
-				json.table.cols.forEach(colonne => {
-					if((colonne.id == "A")||(colonne.id == "B")||(colonne.id == "C")){ table += '<th>' + colonne.label + '</th>'}})
-				table += '</tr>'
-				var lineCounter = 0;
-				json.table.rows.forEach(ligne => {
-				lineCounter++;
-				table += '<tr>'
-				var cellCounter = 0;
-				ligne.c.forEach(cellule => {
-					cellCounter++;
-					try{var valeur = cellule.f ? cellule.f : cellule.v}
-					catch(e){var valeur = ''}
-					if(cellCounter==1){
-						table += '<td>' + valeur + '</td>'
-					}
-					if(cellCounter==2){
-						table += '<td>' + '<div><input type="checkbox" id="yvr' + lineCounter.toString() + '" name="yesVoteRow"></div>' + '</td>'
-					}
-					if(cellCounter==3){
-						table += '<td>' + '<div><input type="checkbox" id="nvr' + lineCounter.toString() + '" name="noVoteRow"></div>' + '</td>'
-					}
-					if(cellCounter==4 && lineCounter != 0){
-						table += '<td><button id="bsr1" type="button">Save</button><button id="brr' + lineCounter.toString() + '" type="button">Reset</button></td>'
-					}
-				  }
-				)
-				table += '</tr>'
+		}
+			
+		<!-- only creates table for the first 3 columns (name, yes, no) in google sheet -->
+		function createTable(jsonString){
+			
+			var json = JSON.parse(jsonString);
+			var table = '<table id="table1"><tr>'
+			json.table.cols.forEach(colonne => {
+				if((colonne.id == "A")||(colonne.id == "B")||(colonne.id == "C")){ table += '<th>' + colonne.label + '</th>'}})
+			table += '</tr>'
+			var lineCounter = 0;
+			json.table.rows.forEach(ligne => {
+			lineCounter++;
+			table += '<tr>'
+			var cellCounter = 0;
+			ligne.c.forEach(cellule => {
+				cellCounter++;
+				try{var valeur = cellule.f ? cellule.f : cellule.v}
+				catch(e){var valeur = ''}
+				if(cellCounter==1){
+					table += '<td>' + valeur + '</td>'
 				}
-			  )
-			  table += '</table>'
-			  return table
+				if(cellCounter==2){
+					table += '<td>' + '<div><input type="checkbox" id="yvr' + lineCounter.toString() + '" name="yesVoteRow"></div>' + '</td>'
+				}
+				if(cellCounter==3){
+					table += '<td>' + '<div><input type="checkbox" id="nvr' + lineCounter.toString() + '" name="noVoteRow"></div>' + '</td>'
+				}
+				if(cellCounter==4 && lineCounter != 0){
+					table += '<td><button id="bsr1" type="button">Save</button><button id="brr' + lineCounter.toString() + '" type="button">Reset</button></td>'
+				}
+			  }
+			)
+			table += '</tr>'
 			}
-				
+		  )
+		  table += '</table>'
+		  return table
+		}
 		</script>
+		
+	<!--
+    BEFORE RUNNING:
+    ---------------
+    1. If not already done, enable the Google Sheets API
+       and check the quota for your project at
+       https://console.developers.google.com/apis/api/sheets
+    2. Get access keys for your application. See
+       https://developers.google.com/api-client-library/javascript/start/start-js#get-access-keys-for-your-application
+    3. For additional information on authentication, see
+       https://developers.google.com/sheets/api/quickstart/js#step_2_set_up_the_sample
+    -->
+    <script>
+    function makeApiCall() {
+      var params = {
+        // The ID of the spreadsheet to retrieve data from.
+        spreadsheetId: '1zJYvKUL0tOzvzv6oax1ZDm-AlJvgDuYrDk_7L8FFTRE',
+
+        // The A1 notation of the values to retrieve.
+        range: 'A1',  // TODO: Update placeholder value.
+
+        // How values should be represented in the output.
+        // The default render option is ValueRenderOption.FORMATTED_VALUE.
+        //valueRenderOption: '',  // TODO: Update placeholder value.
+
+        // How dates, times, and durations should be represented in the output.
+        // This is ignored if value_render_option is
+        // FORMATTED_VALUE.
+        // The default dateTime render option is [DateTimeRenderOption.SERIAL_NUMBER].
+        //dateTimeRenderOption: '',  // TODO: Update placeholder value.
+      };
+
+      var request = gapi.client.sheets.spreadsheets.values.get(params);
+      request.then(function(response) {
+        // TODO: Change code below to process the `response` object:
+        console.log(response.result);
+      }, function(reason) {
+        console.error('error: ' + reason.result.error.message);
+      });
+    }
+
+    function initClient() {
+      var API_KEY = 'AIzaSyCjjo2m4i2R92JvNLeBPZPzn-XkD7IKlOc'; 
+
+      var CLIENT_ID = '580219900909-i12nf3ibk88998vi3sbvvuej47gmc1nq.apps.googleusercontent.com';
+
+      // TODO: Authorize using one of the following scopes:
+      //   'https://www.googleapis.com/auth/drive'
+      //   'https://www.googleapis.com/auth/drive.file'
+      //   'https://www.googleapis.com/auth/drive.readonly'
+      //   'https://www.googleapis.com/auth/spreadsheets'
+      //   'https://www.googleapis.com/auth/spreadsheets.readonly'
+      var SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
+
+      gapi.client.init({
+        'apiKey': API_KEY,
+        'clientId': CLIENT_ID,
+        'scope': SCOPE,
+        'discoveryDocs': ['https://sheets.googleapis.com/$discovery/rest?version=v4'],
+      }).then(function() {
+        gapi.auth2.getAuthInstance().isSignedIn.listen(updateSignInStatus);
+        updateSignInStatus(gapi.auth2.getAuthInstance().isSignedIn.get());
+      });
+    }
+
+    function handleClientLoad() {
+      gapi.load('client:auth2', initClient);
+    }
+
+    function updateSignInStatus(isSignedIn) {
+      if (isSignedIn) {
+        makeApiCall();
+      }
+    }
+
+    function handleSignInClick(event) {
+      gapi.auth2.getAuthInstance().signIn();
+    }
+
+    function handleSignOutClick(event) {
+      gapi.auth2.getAuthInstance().signOut();
+    }
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js"
+      onload="this.onload=function(){};handleClientLoad()"
+      onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+    <button id="signin-button" onclick="handleSignInClick()">Sign in</button>
+    <button id="signout-button" onclick="handleSignOutClick()">Sign out</button>
+		
+		
+		
+		var apiKey = AIzaSyCjjo2m4i2R92JvNLeBPZPzn-XkD7IKlOc
+		var clientId = 580219900909-i12nf3ibk88998vi3sbvvuej47gmc1nq.apps.googleusercontent.com
+		
+
 		
 		
 	</body>
