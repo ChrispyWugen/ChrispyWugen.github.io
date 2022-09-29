@@ -50,7 +50,7 @@
 				  );
 				
 				<!-- close form after wednesday 4pm: input fields and buttons -->
-				if((weekday == "Mi" && curHour >= 16)||(weekday == "Do" && curHour >= 0)){
+				if((weekday == "Mi" && curHour >= 16)||((weekday == "Do" || weekday == "Fr" || weekday == "Sa" || weekday == "So") && curHour >= 0)){
 					console.log("Closing Form");
 				}
 			}
