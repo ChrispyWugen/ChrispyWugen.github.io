@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Fussi Weekly Participant List</title>
+		<style>
+			table {border-collapse: collapse;}
+			th,td {border: 1px solid black;}
+		</style>
+	</head>
+	<body>
+
+		<!-- Title-->
+		<h1>Abstimmungsliste</h1>
+		
+		<h2>Erklärung wie es funktioniert:</h2>
+		<ul>
+		  <li>Finde die Zeile in der dein Name/Email steht</li>
+		  <li>Setze entweder in der Spalte "Ja" oder in der Spalte "Nein" den Haken in der Checkbox</li>
+		  <li>Klicke den Button "Speichern"</li>
+		  <li>Falls du nochmal was ändern willst, klicke den Button "Reset" und fang wieder von vorne an</li>
+		  <li>In der Spalte "Hinweis" kann man einen beliebigen Text eingeben (z.B. +1, Backup wenns eng wird, bringe Kiste mit, etc.)</li></br>
+		  <li>Ab Mittwoch 16 Uhr wird die Seite gesperrt und es ist keine Eingabe mehr möglich. </li>
+		</ul>
+		
+		</br>
+		</br>
+		<h3>Heute sind wir: <input id="Counter1" readOnly="true"><input id="testInput" readOnly="true"></h3>
+		
+		<div id="json">Loading table...</div>
+		
+		<script>
+
+			window.onload = function () {
+				console.log("Script start");
+
+			    <!-- get general data -->
+			    let weekday = new Date().toLocaleString('de-de', {  weekday: 'short' });
+			    console.log("Today is weekday: " + weekday);
+			    const heute = new Date();
+			    let curHour = heute.getHours();
+			    console.log("The hour is: " + curHour)
+			  
+			    <!-- create table -->
+				var id = '1jrb-dt9mooC6_jtUsW3zzDYvCfjVg93V6n5xKhbEMHQ';
+				var gid = '0';
+				var url = 'https://docs.google.com/spreadsheets/d/'+id+'/gviz/tq?tqx=out:json&tq&gid='+gid;
+				fetch(url)
+				  .then(response => response.text())
+				  .then(data => document.getElementById("json").innerHTML=createTable(data.slice(47, -2))  
+				  );
+				
+				<!-- close form after wednesday 4pm: input fields and buttons -->
+				if((weekday == "Mi" && curHour >= 16)||(weekday == "Do" && curHour >= 0)){
+					console.log("Closing Form");
+				}
+			}
+				
+			<!-- only creates table for the first 3 columns (name, yes, no) in google sheet -->
+			function createTable(jsonString){
+				
+				var json = JSON.parse(jsonString);
+				var table = '<table id="table1"><tr>'
+				json.table.cols.forEach(colonne => {
+					if((colonne.id == "A")||(colonne.id == "B")||(colonne.id == "C")){ table += '<th>' + colonne.label + '</th>'}})
+				table += '</tr>'
+				var lineCounter = 0;
+				json.table.rows.forEach(ligne => {
+				lineCounter++;
+				table += '<tr>'
+				var cellCounter = 0;
+				ligne.c.forEach(cellule => {
+					cellCounter++;
+					try{var valeur = cellule.f ? cellule.f : cellule.v}
+					catch(e){var valeur = ''}
+					if(cellCounter==1){
+						table += '<td>' + valeur + '</td>'
+					}
+					if(cellCounter==2){
+						table += '<td>' + '<div><input type="checkbox" id="yvr' + lineCounter.toString() + '" name="yesVoteRow"></div>' + '</td>'
+					}
+					if(cellCounter==3){
+						table += '<td>' + '<div><input type="checkbox" id="nvr' + lineCounter.toString() + '" name="noVoteRow"></div>' + '</td>'
+					}
+					if(cellCounter==4 && lineCounter != 0){
+						table += '<td><button id="bsr1" type="button" onclick="saveHandler(1, 0)">Save</button><button id="brr' + lineCounter.toString() + '" type="button" onclick="resetHandler(1, 0)">Reset</button></td>'
+					}
+				  }
+				)
+				table += '</tr>'
+				}
+			  )
+			  table += '</table>'
+			  return table
+			}
+				
+		</script>
+		
+		
+	</body>
+</html>
