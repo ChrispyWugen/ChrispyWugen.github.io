@@ -1,4 +1,4 @@
-		let google = require('googleapis');
+		import google from 'googleapis';
 		let secretKey = require("./client_secret.json");
 		
 		let jwtClient = new google.auth.JWT(
