@@ -1,4 +1,6 @@
-		import google from 'googleapis';
+		import common from CommonJS
+		
+		let google == require('googleapis');
 		let secretKey = require("./client_secret.json");
 		
 		let jwtClient = new google.auth.JWT(
